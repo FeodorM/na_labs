@@ -15,9 +15,9 @@ import Math.abs;
   * w' = f(x, u, v, w)
   * v' = w
   * u' = v
-  * u(a) = A
   * w(a) = B
-  * u(a) = alpha
+  * v(a) = alpha
+  * u(a) = A
   */
 class Shooting(filename: String) {
   val (_A, _B, _C, a, b, n, eps, maxIterations, alpha0) = getParams()
@@ -45,7 +45,7 @@ class Shooting(filename: String) {
       f,
       (_, _, _, w) => w,
       (_, _, v, _) => v,
-      _A, _B, alpha,
+      _B, alpha, _A,
       a, b, n
     )._3.last
 
