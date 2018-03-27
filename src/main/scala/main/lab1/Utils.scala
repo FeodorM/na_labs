@@ -40,21 +40,21 @@ object Utils {
     var y3 = y3_0
 
     for (x <- xs) {
-      val k11 = h * f1(x, y1, y2, y3)
-      val k12 = h * f2(x, y1, y2, y3)
-      val k13 = h * f3(x, y1, y2, y3)
+      val k11 = f1(x, y1, y2, y3)
+      val k12 = f2(x, y1, y2, y3)
+      val k13 = f3(x, y1, y2, y3)
 
-      val k21 = h * f1(x + h / 2, y1 + k11 / 2, y2 + k12 / 2, y3 + k13 / 2)
-      val k22 = h * f2(x + h / 2, y1 + k11 / 2, y2 + k12 / 2, y3 + k13 / 2)
-      val k23 = h * f3(x + h / 2, y1 + k11 / 2, y2 + k12 / 2, y3 + k13 / 2)
+      val k21 = f1(x + h / 2, y1 + k11 * h / 2, y2 + k12 * h / 2, y3 + k13 * h / 2)
+      val k22 = f2(x + h / 2, y1 + k11 * h / 2, y2 + k12 * h / 2, y3 + k13 * h / 2)
+      val k23 = f3(x + h / 2, y1 + k11 * h / 2, y2 + k12 * h / 2, y3 + k13 * h / 2)
 
-      val k31 = h * f1(x + h, y1 - k11 + 2 * h * k21, y2 - k12 + 2 * h * k22, y1 - k13 + 2 * h * k23)
-      val k32 = h * f2(x + h, y1 - k11 + 2 * h * k21, y2 - k12 + 2 * h * k22, y1 - k13 + 2 * h * k23)
-      val k33 = h * f3(x + h, y1 - k11 + 2 * h * k21, y2 - k12 + 2 * h * k22, y1 - k13 + 2 * h * k23)
+      val k31 = f1(x + h, y1 - k11 * h + 2 * k21 * h, y2 - k12 * h + 2 * k22 * h, y1 - k13 * h + 2 * k23 * h)
+      val k32 = f2(x + h, y1 - k11 * h + 2 * k21 * h, y2 - k12 * h + 2 * k22 * h, y1 - k13 * h + 2 * k23 * h)
+      val k33 = f3(x + h, y1 - k11 * h + 2 * k21 * h, y2 - k12 * h + 2 * k22 * h, y1 - k13 * h + 2 * k23 * h)
 
-      y1 = y1 + (k11 + 4 * k21 + k31) / 6
-      y2 = y2 + (k12 + 4 * k22 + k32) / 6
-      y3 = y3 + (k13 + 4 * k23 + k33) / 6
+      y1 = y1 + h / 6 * (k11 + 4 * k21 + k31)
+      y2 = y2 + h / 6 * (k12 + 4 * k22 + k32)
+      y3 = y3 + h / 6 * (k13 + 4 * k23 + k33)
 
       y1s += y1
       y2s += y2
