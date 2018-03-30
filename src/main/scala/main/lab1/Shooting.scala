@@ -1,6 +1,6 @@
 package main.lab1
 
-import Math.abs;
+import Math.abs
 
 /**
   * u\'\'\' = f(x, u, u', u\'\')
@@ -12,12 +12,12 @@ import Math.abs;
   *
   * aka
   *
-  * w' = f(x, u, v, w)
-  * v' = w
-  * u' = v
-  * w(a) = B
-  * v(a) = alpha
+  * u' = v              u(a) = A
+  * v' = w              v(a) = alpha
+  * w' = f(x, u, v, w)  w(a) = B
   * u(a) = A
+  * v(a) = alpha
+  * w(a) = B
   */
 class Shooting(filename: String) {
   val (_A, _B, _C, a, b, n, eps, maxIterations, alpha0) = getParams(filename)
@@ -25,33 +25,37 @@ class Shooting(filename: String) {
   /**
     * f function from description above
     */
-  def f(x: Double, u: Double, v: Double, w: Double): Double = - w - 1
+  def f(x: Double, u: Double, v: Double, w: Double): Double = 1
+
+  def sol(x: Double): Double = x * x * x / 6 + x * x + x
 
   /**
     * Read parameters from file
     * @return all the parameters
     */
   def getParams(filename: String): (Double, Double, Double, Double, Double, Int, Double, Int, Double) = {
-    // TODO
-    (10, 2, -1 / 2 + 6 + 3 * Math.exp(-1) + 7, 0, 1, 100, 0.001, 10000, 3)
+    (0, 2, sol(1), 0, 1, 10, 0.001, 10000, 1)
   }
 
   /**
     * phi(alpha) = u(b, alpha) - C
-    *
     * (we need to find alpha with phi(alpha) = 0)
+    *
+    * (just a note)
+    * u' = v              u(a) = A
+    * v' = w              v(a) = alpha
+    * w' = f(x, u, v, w)  w(a) = B
     */
   def phi(alpha: Double): Double = {
-    // TODO
     val u = Utils.rungeKuttaSystem(
-      f,
-      (_, _, _, w) => w,
       (_, _, v, _) => v,
-      _B, alpha, _A,
+      (_, _, _, w) => w,
+      f,
+      _A, alpha, _B,
       a, b, n
     )
 
-    abs(u._3.last - _C)
+    abs(u._1.last - _C)
   }
 
   /**
@@ -60,24 +64,27 @@ class Shooting(filename: String) {
     * but it's probably main method
     */
   def apply: Unit = {
-    val us = Utils.rungeKuttaSystem(
-      f,
-      (_, _, _, w) => w,
-      (_, _, v, _) => v,
-      _B, alpha0, _A,
-      a, b, n
-    )._3
-
-    val h = (b - a) / n
-    val xs = Seq.iterate(a, n + 1) (_ + h)
-
-    val ys = xs.map(x => - x * x / 2 + 6 * x + 3 * Math.exp(-x) + 7)
-
-    println(us.length - ys.length)
+    println(s"phi = ${phi(alpha0)}")
     println()
 
+    val us = Utils.rungeKuttaSystem(
+      (_, _, v, _) => v,
+      (_, _, _, w) => w,
+      f,
+      _A, alpha0, _B,
+      a, b, n
+    )._1
+
+    val h = (b - a) / n
+    val xs = (0 to n).map(a + _ * h)
+
+    val ys = xs.map(sol)
+
+    assert(us.lengthCompare(ys.length) == 0)
+
+    println("etc")
     for ((u, y) <- us.zip(ys)) {
-      println((u - y))
+      println(s"${u - y}")
     }
   }
 }
