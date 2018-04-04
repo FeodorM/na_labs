@@ -1,6 +1,4 @@
-package main.lab1
-
-import scala.collection.mutable
+package main.lab1.utils
 
 object Utils {
 
@@ -34,7 +32,8 @@ object Utils {
                         a: Double,
                         b: Double,
                         n: Int
-                      ): (Seq[Double], Seq[Double], Seq[Double]) = {
+                        //                      ): (Seq[Double], Seq[Double], Seq[Double]) = {
+                      ): Seq[(Double, Double, Double, Double)] = {
     val h = (b - a) / n
 
     val ys = Seq.iterate((a, y1_0, y2_0, y3_0), n + 1) {
@@ -61,6 +60,7 @@ object Utils {
           y3 + (k13 + 2 * k23 + 2 * k33 + k43) / 6)
     }
 
-    (ys.map(_._2), ys.map(_._3), ys.map(_._4))
+    //    (ys.map(_._2), ys.map(_._3), ys.map(_._4))
+    ys
   }
 }
